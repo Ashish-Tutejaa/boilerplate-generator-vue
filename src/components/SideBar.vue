@@ -1,0 +1,154 @@
+<template>
+  <div class="sidebar">
+    <div class="items">
+      <svg
+        @click="makeComp"
+        xmlns="http://www.w3.org/2000/svg"
+        height="24px"
+        viewBox="0 0 24 24"
+        width="24px"
+        fill="#fff"
+      >
+        <path d="M0 0h24v24H0V0z" fill="none" />
+        <path
+          d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.49 2 2 6.49 2 12s4.49 10 10 10 10-4.49 10-10S17.51 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
+        />
+      </svg>
+      <p v-if="current">
+        {{ current.name + " " + current.id }}
+      </p>
+    </div>
+    <div v-if="current" class="details">
+      <div class="keys" v-for="(i, key, index) in current" :key="index">
+        <template v-if="key != 'id'">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 0 24 24"
+            width="24px"
+            fill="#fff"
+          >
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path d="M8 5v14l11-7z" />
+          </svg>
+          <p>{{ key }}</p>
+        </template>
+      </div>
+    </div>
+    <div class='panel'>
+        <div v-if='currentKey==="name"'>
+            <input type="text" v-model='propInput'>
+            <div>
+                <span v-for='(prop,index) in current.props' :key='index'>
+                    {{prop}}
+                </span>
+            </div>
+        </div>
+    </div>
+  </div>
+</template>
+
+<script>
+
+
+export default {
+  components: {
+  },
+  props: ["current"],
+  data(){
+      return {
+          currentKey: 'name',
+          propInput: '',
+      }
+  },
+  methods: {
+    makeComp() {
+      this.$emit("makeComp");
+    },
+  },
+  watch: {
+    current(cur, prev) {
+      console.log(cur, prev);
+    },
+  },
+};
+</script>
+
+<style scoped>
+.sidebar {
+  height: 100%;
+  width: 30%;
+  flex: 0 0 auto;
+  background: var(--secondary-black);
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  align-items: center;
+}
+.items {
+  width: 100%;
+  height: 50px;
+  border-bottom: 1px solid gray;
+  color: white;
+  display: flex;
+  align-items: center;
+  flex-flow: row-reverse nowrap;
+  justify-content: space-between;
+}
+
+.items p {
+  margin: 0px 20px;
+  padding: 3px;
+  background: rgba(97, 131, 150, 0.616);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.items svg {
+  margin: 0px 20px;
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 3px;
+  transition-duration: 100ms;
+}
+.items svg:hover {
+  background: rgb(101, 134, 153);
+}
+.details {
+  color: white;
+  height: fit-content;
+  width: 100%;
+  box-sizing: border-box;
+}
+.keys {
+  width: 100%;
+  margin: 5px 0px;
+  padding: 2px 10px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+.keys:hover {
+  background: rgba(101, 134, 153, 0.246);
+}
+.keys p {
+  margin: 0px 6px;
+  cursor: pointer;
+  color: rgb(218, 131, 218);
+  font-weight: bold;
+}
+.keys svg {
+  width: 17px;
+  height: 17px;
+  cursor: pointer;
+}
+.panel{
+    width: 100%;
+    padding: 0px;
+    margin: 0px;
+    margin-top: 20px;
+    height: fit-content;
+    border-top: 1px solid rgba(128, 128, 128, 0.438);
+}
+</style>
