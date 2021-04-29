@@ -13,54 +13,73 @@
           height: `${count * 120}px`,
         }"
       >
+        <connections :update='update' :comps='components'/>
         <template v-for="component in components" :key="component.id">
           <comp :class='{
               selected : selected?.id == component.id
-          }' @click='setSelected(component.id)' :id="component.id" :uid="component.id" />
+          }' @click='setSelected(component.id)' :id="component.id" :uid="component.id" :name='component.name'/>
         </template>
       </div>
     </div>
-    <side-bar :current='selected' @makeComp="makeComp" />
+    <side-bar @updateComp='updateComp($event)' :current='selected' @makeComp="makeComp" />
   </div>
 </template>
 
 <script>
 import SideBar from "./SideBar";
 import Comp from "./Comp";
+import Connections from './Connections';
 
 export default {
   data() {
     return {
       components: [],
       count: 0,
-      selected: null
+      selected: null,
+      update: 0,
     };
   },
   created() {
     this.clicked = false;
   },
+  watch : {
+    components(){
+      if(this.selected){
+        this.setSelected(this.selected.id);
+      }
+    }
+  },
   methods: {
     setSelected(id){
         console.log(id);
-        let selectedObj = {...this.components.reduce((acc,cur) => {
+        let selectedObj = JSON.parse(JSON.stringify(this.components.reduce((acc,cur) => {
             if(acc)
                 return acc;
             else if(cur.id === id)
                 return cur;
-        },null)};
+        },null)));
         this.selected = selectedObj;
+    },
+    updateComp(e){
+      console.log(e);
+      this.components = this.components.map(comp => {
+        if(comp.id === e.id){
+          return e;
+        } else return comp;
+      })
     },
     makeComp() {
       this.count++;
       this.components.push({ 
           id: this.count,
-          name : 'unnamed component',
+          name : `unnamed component ${this.count}`,
           props : [],
           emits : [],
-          data : null,
-          components: null,
-          watch: null,
-          computed: null,
+          data : [],
+          components: [],
+          watch: [],
+          computed: [],
+          methods: [],
         });
     },
     handleMouseDown(e) {
@@ -82,6 +101,8 @@ export default {
         piece.style.top = `${arenaHeight - 150}px`;
       }
         console.log('up');
+      if(this.clicked)
+        this.update += 1;
       this.clicked = false;
       this.selected = null;
     },
@@ -97,6 +118,7 @@ export default {
   components: {
     "side-bar": SideBar,
     comp: Comp,
+    Connections
   },
 };
 </script>

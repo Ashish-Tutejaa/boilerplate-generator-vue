@@ -15,18 +15,25 @@
         />
       </svg>
       <p v-if="current">
-        {{ current.name + " " + current.id }}
+        {{ current.name }}
       </p>
     </div>
     <div v-if="current" class="details">
-      <div class="keys" v-for="(i, key, index) in current" :key="index">
+      <div
+        @click="currentKey = key"
+        class="keys"
+        v-for="(i, key, index) in current"
+        :key="index"
+      >
         <template v-if="key != 'id'">
-          <svg
+          <svg :class='{
+            rotate90 : key === currentKey
+          }'
             xmlns="http://www.w3.org/2000/svg"
             height="24px"
             viewBox="0 0 24 24"
             width="24px"
-            fill="#fff"
+            :fill="key===currentKey ? '#fff' : '#888'"
           >
             <path d="M0 0h24v24H0z" fill="none" />
             <path d="M8 5v14l11-7z" />
@@ -35,31 +42,49 @@
         </template>
       </div>
     </div>
-    <div class='panel'>
-        <div v-if='currentKey==="name"'>
-            <input type="text" v-model='propInput'>
-            <div>
-                <span v-for='(prop,index) in current.props' :key='index'>
-                    {{prop}}
-                </span>
-            </div>
-        </div>
+    <div class="panel" v-if='current'>
+      <div
+        v-if="
+          current &&
+          ['props', 'methods', 'emits', 'components', 'computed'].includes(
+            currentKey
+          )
+        "
+      >
+        <array-panel :comp="current" :thingFor="currentKey" />
+      </div>
+      <div v-else-if="current && currentKey === 'watch'">
+        <watch-panel :comp="current" />
+      </div>
+      <div v-else-if="current && currentKey === 'data'">
+        <data-panel :comp="current" />
+      </div>
+      <div v-else-if="current && currentKey === 'name'">
+        <name-panel :comp='current'/>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-
+import ArrayPanel from "./ArrayPanel";
+import WatchPanel from "./WatchPanel";
+import DataPanel from "./DataPanel";
+import NamePanel from './NamePanel';
 
 export default {
   components: {
+    ArrayPanel,
+    WatchPanel,
+    DataPanel,
+    NamePanel
   },
   props: ["current"],
-  data(){
-      return {
-          currentKey: 'name',
-          propInput: '',
-      }
+  data() {
+    return {
+      currentKey: "props",
+      propInput: "",
+    };
   },
   methods: {
     makeComp() {
@@ -143,12 +168,17 @@ export default {
   height: 17px;
   cursor: pointer;
 }
-.panel{
-    width: 100%;
-    padding: 0px;
-    margin: 0px;
-    margin-top: 20px;
-    height: fit-content;
-    border-top: 1px solid rgba(128, 128, 128, 0.438);
+.panel {
+  width: 100%;
+  padding: 0px;
+  margin: 0px;
+  margin-top: 20px;
+  height: fit-content;
+  border-top: 1px solid rgba(128, 128, 128, 0.438);
 }
+.rotate90{
+  transition-duration: 250ms;
+  transform:rotate(90deg);
+}
+
 </style>

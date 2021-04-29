@@ -22,6 +22,7 @@ body,
   height: 100%;
   margin: 0px;
   padding: 0px;
+  font-size: 16px;
   font-family: 'Roboto', sans-serif;
 }
 :root {
